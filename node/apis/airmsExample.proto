@@ -1,0 +1,17 @@
+syntax = "proto3";
+option go_package = "airman.com/airmsExample/node/apis";
+package apis;
+
+// The request message containing the user's name.
+message AirmsExampleRequest {
+  string name = 1;
+}
+// The response message containing the greetings
+message AirmsExampleReply {
+  string message = 1;
+}
+
+service AirmsExample {
+  rpc SayHello(AirmsExampleRequest) returns (AirmsExampleReply) {}
+}
+
