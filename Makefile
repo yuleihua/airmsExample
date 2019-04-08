@@ -1,9 +1,10 @@
 ## commom Makefile
 
-DATETIME=`date +%FT%T%z`
-PACKAGES=`go list ./... | grep -v /vendor/`
-VETPACKAGES=`go list ./... | grep -v /vendor/ | grep -v /examples/`
-GOFILES=`find . -name "*.go" -type f -not -path "./vendor/*"`
+COMMIT_HASH=$(shell git rev-parse --verify head | cut -c-1-8)
+DATETIME=$(shell date +%Y-%m-%dT%H:%M:%S%z)
+PACKAGES=$(shell go list ./... | grep -v /vendor/)
+VETPACKAGES=$(shell go list ./... | grep -v /vendor/ | grep -v /examples/)
+GOFILES=$(shell find . -name "*.go" -type f -not -path "./vendor/*")
 
 all: fmt build
 
@@ -29,9 +30,9 @@ proto:
 	protoc -I . node/apis/airmsExample.proto --go_out=plugins=grpc:${GOPATH}/src
 
 build: proto
-	go build -o dist/airmsExample main.go
+	go build -o dist/bin/airmsExample -ldflags "-X main.buildDate=$(DATETIME) -X main.gitCommit=$(COMMIT_HASH)" main.go
 
 clean:
-	@if [ -f dist/airmsExample ] ; then rm dist/airmsExample ; fi
+	@if [ -f dist/bin/airmsExample ] ; then rm dist/bin/airmsExample ; fi
 
 

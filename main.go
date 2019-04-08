@@ -5,22 +5,29 @@ import (
 	"fmt"
 	"net/http"
 	_ "net/http/pprof"
+	"os"
 	"time"
 
 	log "airman.com/airms/pkg/mslog"
 
 	"airman.com/airmsExample/node/airmsExample"
 	"airman.com/airmsExample/node/config"
+	"airman.com/airmsExample/node/version"
 )
 
 var (
 	configFile string
 	isPProf    bool
+	isVersion  bool
+
+	gitCommit string // commit hash
+	buildDate string // build datetime
 )
 
 func init() {
 	flag.StringVar(&configFile, "c", "../etc/airmsExample.ini", "configure file")
 	flag.BoolVar(&isPProf, "p", false, "setting of pprof")
+	flag.BoolVar(&isVersion, "v", false, "version information")
 }
 
 func StartPProf(address string) {
@@ -34,6 +41,11 @@ func StartPProf(address string) {
 
 func main() {
 	flag.Parse()
+
+	if isVersion {
+		version.Info(os.Args[0], gitCommit, buildDate)
+		os.Exit(0)
+	}
 
 	// setting config
 	if err := config.Setup(configFile); err != nil {
